@@ -1,8 +1,8 @@
 #!/bin/bash
-wget -O /etc/apt/sources.list https://raw.githubusercontent.com/ziozzang/build-dev-env/master/ubuntu/14.04/source.list
+wget -qO- https://raw.githubusercontent.com/ziozzang/build-dev-env/master/ubuntu/14.04/source.list > /etc/apt/sources.list
 
-apt-get update && apt-get upgrade -fy
-apt-get install -fy screen tmux git-core python-pip apt-transport-https build-essential
+apt-get update && apt-get -fy -o Dpkg::Options::="--force-confold" upgrade
+apt-get install -fy screen tmux git-core python-pip apt-transport-https build-essential vim
 
 wget -qO- https://get.docker.com/ | sh
 
