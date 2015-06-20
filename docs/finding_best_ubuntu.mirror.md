@@ -17,3 +17,13 @@ use mirror://mirrors.ubuntu.com/mirrors.txt insted of specific mirror server.
 ```
 deb mirror://mirrors.ubuntu.com/mirrors.txt precise main restricted universe multiverse
 ```
+
+for debian only
+===============
+
+```
+# install netselect-apt
+apt-get install netselect-apt
+# just execute command
+netselect-apt
+```
