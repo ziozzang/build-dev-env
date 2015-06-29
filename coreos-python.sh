@@ -24,7 +24,7 @@ if [ "\$execmd" == "tbsh" ]; then
   execmd="bash"
 fi
 
-toolbox --bind=${MOUNTS} --bind=/opt:/opt \${execmd} "\$@"
+toolbox --bind=\${MOUNTS} --bind=/opt:/opt \${execmd} "\$@"
 EOF
 
 # Create Links.
