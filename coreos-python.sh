@@ -15,7 +15,12 @@ if [ "\$(id -u)" != "0" ]; then
   MOUNTS="/home:/home"
 fi
 
-toolbox --bind=\${MOUNTS} --bind=/opt:/opt \${0##*/} "\$@"
+execmd=\${0##*/}
+if [ "\$execmd" == "tbsh" ]; then
+  execmd="bash"
+fi
+
+toolbox --bind=${MOUNTS} --bind=/opt:/opt \${execmd} "\$@"
 EOF
 
 # Create Links.
