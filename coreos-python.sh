@@ -1,9 +1,13 @@
 #!/bin/bash
 
 # Set Toolbox Env. (Default Toolbox is Fedora. but I prefer Ubuntu.)
-cat > .toolboxrc <<EOF
+cat > ~/.toolboxrc <<EOF
 TOOLBOX_DOCKER_IMAGE=ubuntu
 TOOLBOX_DOCKER_TAG=14.04
+EOF
+
+cat > ~/.bashrc << EOF
+export PATH=$PATH:/opt/bin
 EOF
 
 # Install busybox-like Toolbox command at /opt/bin/
