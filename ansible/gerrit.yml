@@ -1,0 +1,20 @@
+- name: Install Gerrit update and Run
+  sudo: yes
+  hosts: gerrit
+
+  vars:
+    versions: "2.11.1"
+    urls: "http://10.11.11.1:8080/"
+    paths: "/opt/gerrit/data/"
+
+  tasks:
+  - apt: update_cache=yes
+  - apt: upgrade=dist
+  - apt: name=default-jre-headless state=present
+  - apt: name=git-core state=present
+  - apt: upgrade=dist
+  - shell: mkdir -p /opt/gerrit/bin
+  - get_url: url=https://www.gerritcodereview.com/download/gerrit-{{versions}}.war dest=/opt/gerrit/bin  validate_certs=False
+  - shell: rm -f /opt/gerrit/bin/gerrit.war && ln -s /opt/gerrit/bin/gerrit-{{versions}}.war /opt/gerrit/bin/gerrit.war
+  - shell: if [ ! -d "{{paths}}" ]; then java -jar /opt/gerrit/bin/gerrit.war init --batch -d {{paths}} ;  fi
+  - shell: T=`git config -f {{paths}}/etc/gerrit.config gerrit.canonicalWebUrl` && sed -i -e "s,${T},{{urls}},g" {{paths}}/etc/gerrit.config && {{paths}}/bin/gerrit.sh restart
