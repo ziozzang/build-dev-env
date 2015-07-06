@@ -1,0 +1,12 @@
+- name: Install Jenkins update and Run
+  sudo: yes
+  hosts: jenkins
+
+  tasks:
+  - apt_key: url=http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key state=present
+  - apt_repository: repo='deb http://pkg.jenkins-ci.org/debian binary/' state=present
+  - apt: update_cache=yes
+  - apt: upgrade=dist
+  - apt: name=jenkins state=present
+  - apt: upgrade=dist
+  - service: name=jenkins state=restarted
