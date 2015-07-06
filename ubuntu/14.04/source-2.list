@@ -1,0 +1,25 @@
+deb http://ftp.daum.net/ubuntu/ trusty main restricted
+deb-src http://ftp.daum.net/ubuntu/ trusty main restricted
+
+deb http://ftp.daum.net/ubuntu/ trusty-updates main restricted
+deb-src http://ftp.daum.net/ubuntu/ trusty-updates main restricted
+
+deb http://ftp.daum.net/ubuntu/ trusty universe
+deb-src http://ftp.daum.net/ubuntu/ trusty universe
+deb http://ftp.daum.net/ubuntu/ trusty-updates universe
+deb-src http://ftp.daum.net/ubuntu/ trusty-updates universe
+
+deb http://ftp.daum.net/ubuntu/ trusty multiverse
+deb-src http://ftp.daum.net/ubuntu/ trusty multiverse
+deb http://ftp.daum.net/ubuntu/ trusty-updates multiverse
+deb-src http://ftp.daum.net/ubuntu/ trusty-updates multiverse
+
+deb http://ftp.daum.net/ubuntu/ trusty-backports main restricted universe multiverse
+deb-src http://ftp.daum.net/ubuntu/ trusty-backports main restricted universe multiverse
+
+deb http://ftp.daum.net/ubuntu/ trusty-security main restricted
+deb-src http://ftp.daum.net/ubuntu/ trusty-security main restricted
+deb http://ftp.daum.net/ubuntu/ trusty-security universe
+deb-src http://ftp.daum.net/ubuntu/ trusty-security universe
+deb http://ftp.daum.net/ubuntu/ trusty-security multiverse
+deb-src http://ftp.daum.net/ubuntu/ trusty-security multiverse
