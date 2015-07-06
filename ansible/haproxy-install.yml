@@ -1,0 +1,11 @@
+- name: Install HAProxy install and upgrade
+  sudo: yes
+  hosts: haproxy
+
+  tasks:
+  - apt_repository: repo='ppa:vbernat/haproxy-1.5'
+  - apt: update_cache=yes
+  - apt: upgrade=dist
+  - apt: name=haproxy state=present
+  - shell: sed -i -e "s,\(ENABLED\)=.*,\1=1,g" /etc/default/haproxy
+#  - service: name=haproxy state=restarted
