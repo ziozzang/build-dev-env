@@ -8,11 +8,17 @@ apt-get update
 apt-get install -fy lxd
 
 # Get Images
-lxd-images import lxc ubuntu trusty amd64 --alias ubuntu
+lxd-images import lxc ubuntu trusty amd64 --alias ubuntu-14.04
+lxd-images import lxc ubuntu precise amd64 --alias ubuntu-12.04
+lxd-images import lxc centos 6 amd64 --alias centos-6
+lxd-images import lxc centos 7 amd64 --alias centos-7
+lxd-images import lxc debian jessie amd64 --alias debian-8
+lxd-images import lxc debian wheezy amd64 --alias debian-7
+lxd-images import lxc debian squeeze amd64 --alias debian-6
 
 # Create Images
 CID=${CID:-"first"}
-IMG=${IMG:-"ubuntu"}
+IMG=${IMG:-"ubuntu-14.04"}
 IPADDR="10.11.40.1/16"
 IFS="/"; declare -a Array=($IPADDR)
 IP1="${Array[0]}"
