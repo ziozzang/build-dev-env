@@ -1,0 +1,56 @@
+# Create
+
+#!/bin/bash
+
+if [ -z "$2" ]; then
+  echo "No argument supplied"
+  echo "> $0 [VM_NAME] [VM_IMG]"
+  echo "> $0 first ubuntu-14.04"
+  echo
+  echo "IMAGES LIST ======="
+  lxc image list
+  exit 0
+fi
+
+# Create Images
+CID=${1:-`cat /dev/urandom | tr -dc 'A-Z0-9' | fold -w 10 | head -n 1`}
+IMG=${2:-"ubuntu-14.04"}
+#IPADDR="10.11.40.1/16"
+#IFS="/"; declare -a Array=($IPADDR)
+#IP1="${Array[0]}"
+#IP2="${Array[1]}"
+lxc launch ${IMG} ${CID}
+#LXCSUBNET=`ip route | grep lxcbr0 | awk '{print $1}'`
+INADDR=`lxc info ${CID} | grep eth0 | awk '{print $3}'`
+while [  -z "${INADDR}" ]; do sleep 0.5 && INADDR=`lxc info ${CID} | grep eth0 | awk '{print $3}'`; done
+lxc exec ${CID} -- apt-get update
+# - Create SSH Configurations.
+lxc exec ${CID} -- apt-get install -fy openssh-server iptables ufw
+lxc exec ${CID} -- useradd ziozzang -m
+lxc exec ${CID} -- bash -c "wget -qO- https://raw.github.com/ziozzang/home-server/master/install-new-user | /bin/bash"
+lxc exec ${CID} -- reboot
+echo "IP: ${INADDR}"
+#ip addr add ${IP1}/${IP2} dev eth0
+#iptables -t nat -A PREROUTING -d ${IP1}/32 -p tcp -m comment --comment IPFW_${IP1} -j DNAT --to-destination ${INADDR}
+#iptables -t nat -A POSTROUTING -s "${LXCSUBNET}" -d ${INADDR} -p tcp -m comment --comment "IPFW_${IP1}" -j SNAT --to-source ${IP1}
+
+
+
+##################
+# delete
+
+
+
+if [ -z "$1" ]; then
+  echo "No argument supplied"
+  echo "> $0 [VM_NAME]"
+  echo "> $0 first"
+  echo
+  echo "VM LIST ======="
+  lxc list
+  exit 0
+fi
+
+
+CID=${1:-"first"}
+lxc delete ${CID}
