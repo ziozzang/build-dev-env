@@ -1,4 +1,4 @@
-- name: Initial PyEnv Install (for Ansible and Ubuntu 14.04)
+- name: Initial PyEnv Install as Root (for Ansible and Ubuntu 14.04)
   sudo: yes
   hosts: pyenv_install
 
