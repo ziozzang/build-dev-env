@@ -23,6 +23,7 @@ lxc launch ${IMG} ${CID}
 #LXCSUBNET=`ip route | grep lxcbr0 | awk '{print $1}'`
 INADDR=`lxc info ${CID} | grep eth0 | awk '{print $3}'`
 while [  -z "${INADDR}" ]; do sleep 0.5 && INADDR=`lxc info ${CID} | grep eth0 | awk '{print $3}'`; done
+lxc exec ${CID} -- wget -qO- https://raw.githubusercontent.com/ziozzang/build-dev-env/master/ubuntu/14.04/source.list > /etc/apt/sources.list
 lxc exec ${CID} -- apt-get update
 # - Create SSH Configurations.
 lxc exec ${CID} -- apt-get install -fy openssh-server iptables ufw
