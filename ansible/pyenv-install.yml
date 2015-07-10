@@ -1,0 +1,36 @@
+- name: Initial PyEnv Install (for Ansible and Ubuntu 14.04)
+  sudo: yes
+  hosts: pyenv_install
+
+  tasks:
+  - apt: update_cache=yes
+  - apt: upgrade=dist
+
+  - name: apt-get install Suppliment for pyenv
+    apt: name={{ item }} state=present
+    with_items:
+     - curl
+     - git-core
+     - sudo
+     - make
+     - build-essential
+     - libssl-dev
+     - zlib1g-dev
+     - libbz2-dev
+     - libreadline-dev
+     - libsqlite3-dev
+  - name: check installed
+    stat: path=/root/.pyenv
+    register: pyenv_path
+  - shell: bash -c "curl -k -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash"
+    when: pyenv_path.stat.exists == False
+  - shell: echo 'export PYENVPATH=$HOME/.pyenv' >> ~/.bashrc
+    when: pyenv_path.stat.exists == False
+  - shell: echo 'export PATH=$PYENVPATH/shims:$PYENVPATH/bin:$PATH' >> ~/.bashrc
+    when: pyenv_path.stat.exists == False
+  - shell: echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+    when: pyenv_path.stat.exists == False
+  - shell: echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+    when: pyenv_path.stat.exists == False
+  - shell: export PYENVPATH=$HOME/.pyenv && export PATH=$PYENVPATH/shims:$PYENVPATH/bin:$PATH && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)" && pyenv install $(pyenv install -l | grep " 2." | tail -n 1)
+    when: pyenv_path.stat.exists == False
