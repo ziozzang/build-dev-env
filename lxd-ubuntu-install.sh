@@ -20,6 +20,14 @@ lxd-images import lxc debian squeeze amd64 --alias debian-6
 wget https://images.linuxcontainers.org/images/centos/7/amd64/default/20150619_02:16/lxd.tar.xz
 lxc image import lxd.tar.xz --alias centos-7
 
+# Directory mounts
+
+chmod 777 /opt
+lxc config device add test1 mnt_opt disk source=/opt path=/opt # readonly=true
+lxc config device remove test1 mnt_opt
+
+
+
 # Create Images
 CID=${CID:-"first"}
 IMG=${IMG:-"ubuntu-14.04"}
