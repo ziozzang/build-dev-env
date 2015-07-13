@@ -16,6 +16,10 @@ lxd-images import lxc debian jessie amd64 --alias debian-8
 lxd-images import lxc debian wheezy amd64 --alias debian-7
 lxd-images import lxc debian squeeze amd64 --alias debian-6
 
+# Install images by hands.
+wget https://images.linuxcontainers.org/images/centos/7/amd64/default/20150619_02:16/lxd.tar.xz
+lxc image import lxd.tar.xz --alias centos-7
+
 # Create Images
 CID=${CID:-"first"}
 IMG=${IMG:-"ubuntu-14.04"}
