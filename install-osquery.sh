@@ -11,3 +11,12 @@ fi
 
 cp /usr/share/osquery/osquery.example.conf /etc/osquery/osquery.conf
 service osqueryd restart
+
+
+# Centos 6
+
+rpm -ivh https://osquery-packages.s3.amazonaws.com/centos6/noarch/osquery-s3-centos6-repo-1-0.0.noarch.rpm
+yum install -y osquery
+cp /usr/share/osquery/osquery.example.conf /etc/osquery/osquery.conf
+service osqueryd restart
+
