@@ -1,4 +1,5 @@
 #!/bin/bash
+# Ubuntu
 . /etc/lsb-release
 if [ ! -z "$DISTRIB_CODENAME" ]; then
   apt-get update && apt-get install -fy apt-get python-software-properties software-properties-common apt-transport-https
@@ -6,3 +7,7 @@ if [ ! -z "$DISTRIB_CODENAME" ]; then
   add-apt-repository "deb [arch=amd64] https://osquery-packages.s3.amazonaws.com/${DISTRIB_CODENAME} ${DISTRIB_CODENAME} main"
   apt-get update && apt-get install -fy osquery
 fi
+
+
+cp /usr/share/osquery/osquery.example.conf /etc/osquery/osquery.conf
+service osqueryd restart
