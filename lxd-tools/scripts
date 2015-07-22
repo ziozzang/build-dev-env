@@ -55,3 +55,71 @@ fi
 
 CID=${1:-"first"}
 lxc delete ${CID}
+
+#==============================
+# Create New
+
+#!/bin/bash
+if [ -z "$1" ]; then
+  echo "> $0 VM_NAME IMG_NAME IP/SUBNET"
+  exit 0
+
+fi
+
+CID=${1:-"first"}
+IMG=${2:-"ubuntu-14.04"}
+IPADDR=${3:-"10.11.1.1/16"}
+
+IFS="/"; declare -a Array=($IPADDR)
+IP1="${Array[0]}"
+IP2="${Array[1]}"
+lxc launch ${IMG} ${CID}
+LXCSUBNET=`ip route | grep lxcbr0 | awk '{print $1}'`
+INADDR=`lxc info ${CID} | grep eth0 | awk '{print $3}'`
+while [  -z "${INADDR}" ]; do sleep 0.5 && INADDR=`lxc info ${CID} | grep eth0 | awk '{print $3}'`; done
+if [ "$IMG" == "ubuntu-14.04" ] || [ "$IMG" == "ubuntu-12.04" ]; then
+lxc exec ${CID} -- apt-get update
+# - Create SSH Configurations.
+lxc exec ${CID} -- apt-get install -fy openssh-server iptables ufw
+lxc exec ${CID} -- useradd ziozzang -m
+lxc exec ${CID} -- bash -c "wget -qO- https://raw.github.com/ziozzang/home-server/master/install-new-user | /bin/bash"
+lxc exec ${CID} -- reboot
+fi
+
+if [ "$IMG" == "centos-6" ]; then
+lxc exec ${CID} -- yum -y install -y openssh-server openssh-clients
+lxc exec ${CID} -- sed -i -e "s,^#\(PermitRootLogin\),\1,g" /etc/ssh/sshd_config
+lxc exec ${CID} -- sed -i -e "s,^#\(RSAAuthentication\),\1,g" /etc/ssh/sshd_config
+lxc exec ${CID} -- sed -i -e "s,^#\(AuthorizedKeysFile\),\1,g" /etc/ssh/sshd_config
+lxc exec ${CID} -- /sbin/service sshd start
+lxc exec ${CID} -- mkdir -p /root/.ssh
+lxc exec ${CID} -- bash -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDIRzly5m4mxTMKK9qqYuhDjx34NuNQW1gLpyuHmWLcMMtrOImbVd21bVReJYIwLQwga6p7iEMKiiJ+64hwbpqSZA2yo2MoC/1GhQndVwcVjSzsHOIL38XmiXN21ziiJSczuHwsOr4Zhkmd2N8ebP1Ybp3cWw4uJpjJhMb+FoE4vKn3JljK/00pGr9cENwkfvvapssQdFWvLqIALOn0sq1Ah/cKvdxMmE+J8GNaf30ZVxOjkYxXY90vXbhikh5wy8Oat6lG2m1lX9Yh+UQaIXbWSLqeXhYr2aOCCoEJ2FDV5DvgICdSATcNWYVzsWaaRTiWW+2qC86bbGgX1Vr1HJBF ziozzang@nexon.co.kr" > /root/.ssh/authorized_keys'
+lxc exec ${CID} -- bash -c "chmod 400 /root/.ssh/ && chmod 500 /root/.ssh"
+lxc exec cent6 -- bash -c "passwords=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1` && echo \"root:${passwords}\" | chpasswd"
+
+fi
+
+ip addr add ${IP1}/${IP2} dev p1p1
+iptables -t nat -A PREROUTING -d ${IP1}/32 -p tcp -m comment --comment IPFW_${IP1} -j DNAT --to-destination ${INADDR}
+iptables -t nat -A POSTROUTING -s "${LXCSUBNET}" -d ${INADDR} -p tcp -m comment --comment "IPFW_${IP1}" -j SNAT --to-source ${IP1}
+
+#==============================================
+# Delete New
+
+#!/bin/bash
+
+
+if [ -z "$1" ]; then
+  echo "> $0 VM_NAME IP/SUBNET"
+  exit 0
+
+fi
+
+CID=${1:-"first"}
+lxc delete ${CID}
+IPADDR=${2:-"10.11.1.1/16"}
+IFS="/"; declare -a Array=($IPADDR)
+IP1="${Array[0]}"
+IP2="${Array[1]}"
+ip addr del ${IP1}/${IP2} dev p1p1
+iptables-save | grep -v "IPFW_${IP1}" | iptables-restore
