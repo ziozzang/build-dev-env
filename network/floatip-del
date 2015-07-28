@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  echo "# $0 float_ip/subnet target_ip"
+  echo "# $0 10.2.3.4/24 192.168.0.1"
+  exit 0
+fi
+
+IPS=${IPS:-"$1"}
+TIP=${TIP:-"$2"}
+
+# Tokenize and Testing Format
+set -- "$IPS"
+IFS="/"; declare -a Array=($*)
+
+if [ -z "${Array[0]}" ]; then
+    echo "IP Address detection failed"
+    failed
+else
+  if valid_ip "${Array[0]}"; then
+    true
+  else
+    echo "IP Format is bad."
+    failed
+  fi
+fi
+
+if [ -z "${Array[1]}" ]
+  then
+    echo "Subnet mask detection failed"
+    failed
+fi
+
+ETH=$(route -n | grep "^0.0.0.0" | tr ' ' '\n' | tail -1)
+
+
+ip addr del ${Array[0]}/${Array[1]} dev ${ETH}
+iptables-save | grep -v "IPFW_${Array[0]}" | iptables-restore
