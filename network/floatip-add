@@ -13,24 +13,6 @@ TIP=${TIP:-"$2"}
 set -- "$IPS"
 IFS="/"; declare -a Array=($*)
 
-if [ -z "${Array[0]}" ]; then
-    echo "IP Address detection failed"
-    failed
-else
-  if valid_ip "${Array[0]}"; then
-    true
-  else
-    echo "IP Format is bad."
-    failed
-  fi
-fi
-
-if [ -z "${Array[1]}" ]
-  then
-    echo "Subnet mask detection failed"
-    failed
-fi
-
 ETH=$(route -n | grep "^0.0.0.0" | tr ' ' '\n' | tail -1)
 
 
